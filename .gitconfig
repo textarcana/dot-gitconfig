@@ -1,0 +1,70 @@
+[push]
+        default = current
+
+[user]
+        name = YOUR_NAME
+        email = YOUR_EMAIL
+
+[github]
+        user = YOUR_GITHUB_USER_NAME
+        token = YOUR_GITHUB_TOKEN
+
+[alias]
+        d  = diff --find-renames --find-copies --format=fuller --color-words
+        dw = diff --find-renames --find-copies --format=fuller
+
+        # diff upstream master
+        du = diff --find-renames --find-copies --format=fuller --color-words origin/master HEAD
+
+        # diff current branch against master
+        dm = diff --find-renames --find-copies --format=fuller --color-words master HEAD
+        dms = diff --find-renames --find-copies --stat master HEAD
+
+        ci = commit
+        co = checkout
+
+        s = status -s
+        stq = status -uno -s
+
+        t  = !git tag -ln1 | sort -rn
+        tt = log --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+        ttt = log --all --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+        tags = tag -l -n1
+
+        l  = log --pretty=oneline --abbrev-commit --graph --decorate
+        lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
+        ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
+        la = log --pretty=oneline --abbrev-commit --graph --decorate --all
+        lstat = log --graph --decorate --date-order --stat
+        lf = log --graph --decorate --date-order --shortstat --follow
+        lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph HEAD...master
+        lw =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+
+        unstage = reset
+        undo = reset HEAD~1
+        staged = diff --cached --find-renames --find-copies --format=fuller --color-words
+        cleanse = clean -df
+
+        branches = branch -a
+
+        # see http://stackoverflow.com/questions/2514172/listing-each-branch-and-its-last-revisions-date-in-git
+        b = !git for-each-ref --sort='-authordate' --format='%(authordate:short)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'
+
+        # Use this perl Script to produce a JavaScript object literal from the output of the JSON log format:
+        #     git log-json -n5 | perl -pe 'BEGIN{print "var git_log = {"}; s/}/},/; END{print "};\n"}'
+
+        log-json = log --pretty=format:'\"%h\": {%n  \"commit\": \"%H\",%n  \"author\": \"%an <%ae>\",%n  \"date\": \"%ad\",%n  \"message\": \"%s\"%n}'
+
+        log-json-full = log --pretty=format:'\"%h\": {%n  \"commit\": \"%H\",%n  \"author\": \"%a <%ae>\",%n  \"date\": \"%ad\",%n  \"message\": \"%s,%n  \"subject\": \"%s\"}'
+
+[push]
+        default = current
+
+[branch "master"]
+        remote = origin
+        merge  = refs/heads/master
+
+[color]
+        diff = auto
+        status = auto
+        branch = auto

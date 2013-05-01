@@ -1,0 +1,1 @@
+# Noah Sussman's `.gitconfig`
