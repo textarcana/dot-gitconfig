@@ -1,19 +1,71 @@
+[push]
+        default = current
+
+[branch "master"]
+        remote = origin
+        merge  = refs/heads/master
+
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+
 [alias]
+        d  = diff --find-renames --find-copies --format=fuller --color-words
+        dw = diff --find-renames --find-copies --format=fuller
+
+        # diff upstream master
+        du = diff --find-renames --find-copies --format=fuller --color-words origin/master HEAD
+
+        # diff current branch against master
+        dm = diff --find-renames --find-copies --format=fuller --color-words master HEAD
+        dms = diff --find-renames --find-copies --stat master HEAD
+
+        # git show commits that are on the current branch but NOT on some other branch, eg:
+        #     git diffbranch otherbranch..
+        diffbranch = log --no-merges --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+
+        # diff current branch against the same branch at origin
+        # eg just before pushing to remote to assure you are only pushing what you think you are pushing.
+        # More flexible form of git diff origin/master master
+        diffremote = "! branchname=$(git branch | grep ^\\* | cut -d' ' -f2); git diff origin/$branchname $branchname"
+
+        ci = commit
+        co = checkout
+
         s = status -s
-        l = log --graph --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s'
-        lstat = log --graph --decorate --stat
-        d = diff --find-renames --find-copies --format=fuller --color-words
-        staged = diff --find-renames --find-copies --format=fuller --color-words --cached
+        stq = status -uno -s
+
+        t  = !git tag -ln1 | sort -rn
+        tt = log --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+        ttt = log --all --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+        tags = tag -l -n1
+
+        l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+        lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
+        ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
+        la = log --pretty=oneline --abbrev-commit --graph --decorate --all
+        lstat = log --graph --decorate --date-order --stat
+        lf = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --decorate --follow
+        lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph HEAD...master
+        lw =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph --decorate
+
+        # show the most recent commit
+        wut = log --pretty=oneline --abbrev-commit --graph --decorate -p -n 1
+
+        unstage = reset
         undo = reset HEAD~1
+        staged = diff --cached --find-renames --find-copies --format=fuller --color-words
+        cleanse = clean -df
+
         branches = branch -a
-        
-        # List local branches and sort by modification date.
+
+        # see http://stackoverflow.com/questions/2514172/listing-each-branch-and-its-last-revisions-date-in-git
         b = !git for-each-ref --sort='-authordate' \
-              --format='%(authordate:short)%09%(objectname:short)%09%(refname)' refs/heads |\
-              sed -e 's-refs/heads/--'
-        
-        # Show unmerged commits.
-        # NOTE: Two dots after the branch name are required. Eg:
-        #         git diffbranch develop..
-        diffbranch = log --no-merges \
-                         --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+                     --format='%(authordate:short)%09%(objectname:short)%09%(refname)' refs/heads | \
+                 sed -e 's-refs/heads/--'
+
+        log-json = log --pretty=format:'{%n  \"commit\": \"%H\",%n  \"author\": \"%an <%ae>\",%n  \"date\": \"%ad\",%n  \"message\": \"%f\"%n},'
+
+        m = merge
+        a = add
