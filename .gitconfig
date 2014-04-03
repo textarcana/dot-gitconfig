@@ -14,13 +14,6 @@
         d  = diff --find-renames --find-copies --format=fuller --color-words
         dw = diff --find-renames --find-copies --format=fuller
 
-        # diff upstream master
-        du = diff --find-renames --find-copies --format=fuller --color-words origin/master HEAD
-
-        # diff current branch against master
-        dm = diff --find-renames --find-copies --format=fuller --color-words master HEAD
-        dms = diff --find-renames --find-copies --stat master HEAD
-
         # git show commits that are on the current branch but NOT on some other branch, eg:
         #     git diffbranch otherbranch..
         diffbranch = log --no-merges --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
@@ -43,11 +36,9 @@
 
         l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
         lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
-        ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
         la = log --pretty=oneline --abbrev-commit --graph --decorate --all
         lstat = log --graph --decorate --date-order --stat
         lf = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --decorate --follow
-        lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph HEAD...master
         lw =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph --decorate
 
         # show the most recent commit
