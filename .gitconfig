@@ -14,9 +14,17 @@
         d  = diff --find-renames --find-copies --format=fuller --color-words
         dw = diff --find-renames --find-copies --format=fuller
 
+        # diff upstream master
+        du = diff --find-renames --find-copies --format=fuller --color-words origin/master HEAD
+
+        # diff current branch against master
+        dm = diff --find-renames --find-copies --format=fuller --color-words master HEAD
+        dms = diff --find-renames --find-copies --stat master HEAD
+
         # git show commits that are on the current branch but NOT on some other branch, eg:
-        #     git diffbranch otherbranch..
-        diffbranch = log --no-merges --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+        #     git diffbranch ..otherbranch
+        # Note the two dots that come BEFORE the branch name.
+        diffbranch = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
 
         # diff current branch against the same branch at origin
         # eg just before pushing to remote to assure you are only pushing what you think you are pushing.
@@ -36,9 +44,11 @@
 
         l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
         lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
+        ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
         la = log --pretty=oneline --abbrev-commit --graph --decorate --all
         lstat = log --graph --decorate --date-order --stat
         lf = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --decorate --follow
+        lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph HEAD...master
         lw =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph --decorate
 
         # show the most recent commit
@@ -47,9 +57,13 @@
         unstage = reset
         undo = reset HEAD~1
         staged = diff --cached --find-renames --find-copies --format=fuller --color-words
-        cleanse = clean -df
 
-        branches = branch -a
+        # see http://stackoverflow.com/questions/12055198/find-out-git-branch-creator
+        branches = !git for-each-ref --format='%(committerdate)%09%(authorname)%09%(objectname:short)%09%(refname)' \
+                 | sort -k5n -k2M -k3n -k4n \
+                 | grep --color=never remotes \
+                 | perl -lwpe 's{refs/remotes/origin/}{}' \
+                 | awk -F '\t' '{ printf \"%-32s %-22s %-12s %s\\n\", $1, $2, $3, $4 }'
 
         # see http://stackoverflow.com/questions/2514172/listing-each-branch-and-its-last-revisions-date-in-git
         b = !git for-each-ref --sort='-authordate' \
@@ -60,3 +74,25 @@
 
         m = merge
         a = add
+
+        clean-how-i-mean = !git status -s | grep --color=never '??' | cut -c4- | xargs -I@ rm -rv @
+        cleanse = !git clean-how-i-mean
+
+        whatever = commit -a --fixup HEAD
+        whatevs = !git whatever
+        watevs = !git whatever
+        fuck = !git whatever
+        wat = !git whatever
+
+        YOLO = !git whatever && git push
+        fuck-the-world = !git YOLO
+
+        sync = pull --rebase origin master
+
+        # Update git commit author date when amending.
+        #
+        # cf http://stackoverflow.com/questions/9110310
+        amend = !git commit --amend --date=\"$(date -R)\"
+
+[hub]
+protocol = https
