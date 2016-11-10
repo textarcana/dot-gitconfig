@@ -22,8 +22,10 @@
         dms = diff --find-renames --find-copies --stat master HEAD
 
         # git show commits that are on the current branch but NOT on some other branch, eg:
-        #     git diffbranch ..otherbranch
-        # Note the two dots that come BEFORE the branch name.
+        #
+        #     git diffbranch master..
+        #
+        # Note the two dots that come AFTER the name of the master branch.
         diffbranch = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
 
         # diff current branch against the same branch at origin
