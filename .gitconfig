@@ -45,6 +45,7 @@
         tags = tag -l -n1
 
         l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
         lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
         ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
         la = log --pretty=oneline --abbrev-commit --graph --decorate --all
@@ -82,8 +83,6 @@
 
         whatever = commit -a --fixup HEAD
         whatevs = !git whatever
-        watevs = !git whatever
-        fuck = !git whatever
         wat = !git whatever
 
         YOLO = !git whatever && git push
