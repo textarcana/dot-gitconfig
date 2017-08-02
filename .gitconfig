@@ -87,7 +87,6 @@
         wat = !git whatever
 
         YOLO = !git whatever && git push
-        fuck-the-world = !git YOLO
 
         sync = pull --rebase origin master
 
