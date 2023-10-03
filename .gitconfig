@@ -1,101 +1,161 @@
-[push]
-        default = current
 
-[branch "master"]
-        remote = origin
-        merge  = refs/heads/master
+[push]
+    default = current
+
+[branch "main"]
+    remote = origin
+    merge  = refs/heads/main
 
 [color]
-        diff = auto
-        status = auto
-        branch = auto
+    diff = auto
+    status = auto
+    branch = auto
 
 [alias]
-        d  = diff --find-renames --find-copies --format=fuller --color-words
-        dw = diff --find-renames --find-copies --format=fuller
+    d  = diff --find-renames --find-copies --format=fuller --color-words
+    dw = diff --find-renames --find-copies --format=fuller
 
-        # diff upstream master
-        du = diff --find-renames --find-copies --format=fuller --color-words origin/master HEAD
+    # diff upstream main
+    du = diff --find-renames --find-copies --format=fuller --color-words origin/main HEAD
 
-        # diff current branch against master
-        dm = diff --find-renames --find-copies --format=fuller --color-words master HEAD
-        dms = diff --find-renames --find-copies --stat master HEAD
+    # diff current branch against main
+    dm = diff --find-renames --find-copies --format=fuller --color-words main HEAD
+    dms = diff --find-renames --find-copies --stat main HEAD
 
-        # git show commits that are on the current branch but NOT on some other branch, eg:
-        #
-        #     git diffbranch master..
-        #
-        # Note the two dots that come AFTER the name of the master branch.
-        diffbranch = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+    # git show commits that are on the current branch but NOT on some other branch, eg:
+    #
+    #     git diffbranch main..
+    #
+    # Note the two dots that come AFTER the name of the main branch.
+    diffbranch = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
 
-        # diff current branch against the same branch at origin
-        # eg just before pushing to remote to assure you are only pushing what you think you are pushing.
-        # More flexible form of git diff origin/master master
-        diffremote = "! branchname=$(git branch | grep ^\\* | cut -d' ' -f2); git diff origin/$branchname $branchname"
+    # diff current branch against the same branch at origin
+    # eg just before pushing to remote to assure you are only pushing what you think you are pushing.
+    # More flexible form of git diff origin/main main
+    diffremote = "! branchname=$(git branch | grep ^\\* | cut -d' ' -f2); git diff origin/$branchname $branchname"
 
-        ci = commit
-        co = checkout
+    ci = commit
+    co = checkout
 
-        s = status -s
-        stq = status -uno -s
+    s = status -s
+    stq = status -uno -s
 
-        t  = !git tag -ln1 | sort -rn
-        tt = log --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
-        ttt = log --all --date-order --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
-        tags = tag -l -n1
+    #           _ __     __
+    #    ____ _(_) /_   / /_____ _____ ______
+    #   / __ `/ / __/  / __/ __ `/ __ `/ ___/
+    #  / /_/ / / /_   / /_/ /_/ / /_/ (__  )
+    #  \__, /_/\__/   \__/\__,_/\__, /____/
+    # /____/                   /____/
+    #
+    # git tags
 
-        l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
-        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
-        lp = log --pretty=oneline --abbrev-commit --graph --decorate -p
-        ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...master
-        la = log --pretty=oneline --abbrev-commit --graph --decorate --all
-        lstat = log --graph --decorate --date-order --stat
-        lf = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --decorate --follow
-        lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph HEAD...master
-        lw =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph --decorate
+    # show tags with full message
+    t = !git --no-pager tag -n999 --sort=-v:refname
+    tt = !git supertags
+    ttt = !git log --tags --pretty=format:'%D%x09%x09%s%x09%x09%aI%x09%hq' | ack \"\\btag:\"
+    tttt = log --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+    ttttt = log --all --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
+    tags = !git tag -ln1 | sort -rn
+    supertags = !(git log \
+                    --tags \
+                    --pretty=format:'%D%x09%x09%s\n%D%x09%x09%aI%x09%x09%h' \
+                | ack \"\\btag:\" \
+                | cut -d' ' -f2- \
+                | cat \
+                && git tags) \
+                | sort -rV
 
-        # show the most recent commit
-        wut = log --pretty=oneline --abbrev-commit --graph --decorate -p -n 1
 
-        unstage = reset
-        undo = reset HEAD~1
-        staged = diff --cached --find-renames --find-copies --format=fuller --color-words
+    #           _ __     __
+    #    ____ _(_) /_   / /___  ____ _
+    #   / __ `/ / __/  / / __ \/ __ `/
+    #  / /_/ / / /_   / / /_/ / /_/ /
+    #  \__, /_/\__/  /_/\____/\__, /
+    # /____/                 /____/
+    #
+    # git log
 
-        # see http://stackoverflow.com/questions/12055198/find-out-git-branch-creator
-        branches = !git for-each-ref --format='%(committerdate)%09%(authorname)%09%(objectname:short)%09%(refname)' \
-                 | sort -k5n -k2M -k3n -k4n \
-                 | grep --color=never remotes \
-                 | perl -lwpe 's{refs/remotes/origin/}{}' \
-                 | awk -F '\t' '{ printf \"%-32s %-22s %-12s %s\\n\", $1, $2, $3, $4 }'
+    l  = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph
+    lf = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --decorate --follow
+    ll = log --pretty=oneline --abbrev-commit --graph --decorate HEAD...main
+    lll = log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph  HEAD...main
+    llll = log --pretty=oneline --abbrev-commit --graph --decorate --all
+    lllll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+    llllll = log --pretty=oneline --abbrev-commit --graph --decorate -p
+    lllllll =  log --pretty='%C(yellow)%h%d %Creset%an %Cgreen%ar:%Creset %s' --graph --decorate
+    llllllll = !git whereami
+    lstat = log --graph --decorate --stat
 
-        # see http://stackoverflow.com/questions/2514172/listing-each-branch-and-its-last-revisions-date-in-git
-        b = !git for-each-ref --sort='-authordate' \
-                     --format='%(authordate:short)%09%(objectname:short)%09%(refname)' refs/heads | \
-                 sed -e 's-refs/heads/--'
+    # show the most recent commit
+    wut = log --pretty=oneline --abbrev-commit --graph --decorate -p -n 1
+    whereami = !git wut
 
-        log-json = log --pretty=format:'{%n  \"commit\": \"%H\",%n  \"author\": \"%an <%ae>\",%n  \"date\": \"%ad\",%n  \"message\": \"%f\"%n},'
+    unstage = reset
+    undo = reset HEAD~1
+    staged = diff --cached --find-renames --find-copies --format=fuller --color-words
 
-        m = merge
-        a = add
+    #     __                          __
+    #    / /_  _________ _____  _____/ /_  ___  _____
+    #   / __ \/ ___/ __ `/ __ \/ ___/ __ \/ _ \/ ___/
+    #  / /_/ / /  / /_/ / / / / /__/ / / /  __(__  )
+    # /_.___/_/   \__,_/_/ /_/\___/_/ /_/\___/____/
+    #
+    # git branches
 
-        clean-how-i-mean = !git status -s | grep --color=never '??' | cut -c4- | xargs -I@ rm -rv @
-        cleanse = !git clean-how-i-mean
+    # see http://stackoverflow.com/questions/12055198/find-out-git-branch-creator
+    branches = !git for-each-ref --format='%(committerdate)%09%(authorname)%09%(objectname:short)%09%(refname)' \
+             | sort -k5n -k2M -k3n -k4n \
+             | grep --color=never remotes \
+             | perl -lwpe 's{refs/remotes/origin/}{}' \
+             | awk -F '\t' '{ printf \"%-32s %-22s %-12s %s\\n\", $1, $2, $3, $4 }'
 
-        whatever = commit -a --fixup HEAD
-        whatevs = !git whatever
-        wat = !git whatever
+    # see http://stackoverflow.com/questions/2514172/listing-each-branch-and-its-last-revisions-date-in-git
+    b = !git for-each-ref --sort='-authordate' \
+                 --format='%(authordate:short)%09%(objectname:short)%09%(refname)' refs/heads | \
+             sed -e 's-refs/heads/--'
 
-        YOLO = !git whatever && git push
+    m = merge
+    a = add
 
-        sync = pull --rebase origin master
+    clean-how-i-mean = !git status -s | grep --color=never '??' | cut -c4- | xargs -I@ rm -rv @
 
-        # Update git commit author date when amending.
-        #
-        # cf http://stackoverflow.com/questions/9110310
-        amend = !git commit --amend --date=\"$(date -R)\"
+    whatever = commit -a --fixup HEAD
+    whatevs = !git whatever
+    wat = !git whatever
 
-[hub]
-protocol = https
+    YOLO = !git whatever && git push
+
+    sync = pull --rebase origin main
+
+    # Update git commit author date when amending.
+    #
+    # cf http://stackoverflow.com/questions/9110310
+    amend = !git commit --amend --date=\"$(date -R)\"
+
+    # show the size of commits
+    #
+    # cf https://stackoverflow.com/questions/10622179
+
+    du = !git rev-list --objects --all \
+        | git cat-file \
+            --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
+        | sed -n 's/^blob //p' \
+        | sort -rV --key=2 \
+        | cut -c 1-12,41- \
+        | numfmt \
+            --field=2 \
+            --to=iec-i \
+            --suffix=B \
+            --padding=7 \
+            --round=nearest \
+     | less
+
+     # Show all the commits in a merge, given the merge commit as an argument.
+
+     show-merge = "!git log --format=\"%H\t%s\" \"$1\"^..\"$1\" #"
 
 [help]
     autocorrect=1
+
+[diff]
+    renameLimit = 5494
