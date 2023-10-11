@@ -50,7 +50,7 @@
     # git tags
 
     # show tags with full message
-    t = !git --no-pager tag -n999 --=-v:refname
+    t = !git --no-pager tag -n999 ---sort=-v:refname
     tt = !git supertags
     ttt = !git log --tags --pretty=format:'%D%x09%x09%s%x09%x09%aI%x09%hq' | ack \"\\btag:\"
     tttt = log --graph --tags --simplify-by-decoration --pretty=format:'%ai %h %d'
